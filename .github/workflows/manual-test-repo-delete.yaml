@@ -9,7 +9,7 @@ on:
         required: true
 
 jobs:
-  create_repo:
+  delete_repo:
     if: ${{ github.event.inputs.confirm == 'Delete' }}
     runs-on: ubuntu-latest
     steps:

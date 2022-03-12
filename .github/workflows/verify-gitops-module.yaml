@@ -28,9 +28,8 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   verify:
-    if: ${{ !contains( github.event.pull_request.labels.*.name, 'skip ci' ) }}
     runs-on: ubuntu-latest
-    container: quay.io/ibmgaragecloud/cli-tools:v0.15
+    container: quay.io/cloudnativetoolkit/terraform:v1.1
 
     strategy:
       matrix:
@@ -105,35 +104,3 @@ jobs:
           TF_VAR_cp_entitlement_key: ${{ secrets.CP_ENTITLEMENT_KEY }}
           TF_VAR_cluster_username: ${{ steps.variables.outputs.CLUSTER_USERNAME }}
           TF_VAR_cluster_password: ${{ steps.variables.outputs.CLUSTER_PASSWORD }}
-
-  verifyMetadata:
-    runs-on: ubuntu-latest
-
-    env:
-      DIST_DIR: ./dist
-      PUBLISH_BRANCH: gh-pages
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - uses: cloud-native-toolkit/action-module-metadata-create@v1
-        with:
-          strict: true
-          validate: true
-
-  release:
-    needs: [verify, verifyMetadata]
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' }}
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Drafts your next Release notes as Pull Requests are merged into "main"
-      - uses: release-drafter/release-drafter@v5
-        with:
-          # (Optional) specify config name to use, relative to .github/. Default: release-drafter.yml
-          config-name: release-drafter.yaml
-          publish: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
