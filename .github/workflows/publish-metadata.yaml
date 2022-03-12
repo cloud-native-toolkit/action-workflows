@@ -3,7 +3,7 @@ name: Publish metadata
 on:
   workflow_call:
     secrets:
-      GITHUB_TOKEN:
+      TOKEN:
         required: true
 
 jobs:
@@ -32,6 +32,6 @@ jobs:
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.TOKEN }}
           publish_dir: ${{ env.DIST_DIR }}
           publish_branch: ${{ env.PUBLISH_BRANCH }}
