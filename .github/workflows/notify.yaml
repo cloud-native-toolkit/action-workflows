@@ -3,7 +3,7 @@ name: Notify
 on:
   workflow_call:
     secrets:
-      TOKEN:
+      GITHUB_TOKEN:
         required: true
 
 jobs:
@@ -23,4 +23,4 @@ jobs:
           notifyRepo: ${{ matrix.repo }}
           eventType: released
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
