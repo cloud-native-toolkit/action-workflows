@@ -9,6 +9,10 @@ on:
         required: true
         type: string
         default: ocp4_latest_gitops
+      skipDestroy:
+        required: false
+        type: string
+        default: "false"
     secrets:
       GIT_ORG:
         required: false
@@ -93,7 +97,7 @@ jobs:
 
       - name: Verify destroy on ${{ matrix.testcase }}
         uses: cloud-native-toolkit/action-module-verify-destroy@main
-        if: ${{ always() }}
+        if: ${{ always() && inputs.skipDestroy != 'true' }}
         with:
           clusterId: ${{ matrix.testcase }}
         env:
