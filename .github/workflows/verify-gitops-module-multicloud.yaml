@@ -80,7 +80,7 @@ jobs:
           if [[ $ENVIRONMENT =~ ^aws ]]; then
             echo "::set-output name=CLUSTER_USERNAME::$AWS_CLUSTER_USERNAME"
             echo "::set-output name=CLUSTER_PASSWORD::$AWS_CLUSTER_PASSWORD"
-          else if [[ $ENVIRONMENT =~ ^azure ]]; then
+          elif [[ $ENVIRONMENT =~ ^azure ]]; then
             echo "::set-output name=CLUSTER_USERNAME::$AZURE_CLUSTER_USERNAME"
             echo "::set-output name=CLUSTER_PASSWORD::$AZURE_CLUSTER_PASSWORD"
           else 
