@@ -5,6 +5,11 @@ on:
     secrets:
       TOKEN:
         required: true
+    inputs:
+      validate:
+        required: false
+        type: boolean
+        default: true
 
 jobs:
   publish-assets:
@@ -27,7 +32,7 @@ jobs:
           distDir: ${{ env.DIST_DIR }}
           publishBranch: ${{ env.PUBLISH_BRANCH }}
           strict: false
-          validate: true
+          validate: ${{ inputs.validate }}
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
