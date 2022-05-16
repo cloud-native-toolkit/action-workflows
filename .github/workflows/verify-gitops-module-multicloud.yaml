@@ -46,7 +46,6 @@ jobs:
           - azure_latest_gitops
           - ocp4_latest_gitops
           #- aws_latest_gitops
-      max-parallel: 1
       fail-fast: false
 
     env:
