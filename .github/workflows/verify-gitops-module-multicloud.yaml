@@ -20,6 +20,8 @@ on:
         required: true
       AZURE_CLUSTER_PASSWORD:
         required: true
+      AZURE_CLUSTER_CA_CERT:
+        required: true
       AWS_CLUSTER_USERNAME:
         required: true
       AWS_CLUSTER_PASSWORD:
@@ -62,10 +64,13 @@ jobs:
           GIT_ORG: ${{ secrets.GIT_ORG }}
           AWS_CLUSTER_USERNAME: ${{ secrets.AWS_CLUSTER_USERNAME }}
           AWS_CLUSTER_PASSWORD: ${{ secrets.AWS_CLUSTER_PASSWORD }}
+          AWS_CLUSTER_CA_CERT: ""
           AZURE_CLUSTER_USERNAME: ${{ secrets.AZURE_CLUSTER_USERNAME }}
           AZURE_CLUSTER_PASSWORD: ${{ secrets.AZURE_CLUSTER_PASSWORD }}
+          AZURE_CLUSTER_CA_CERT: ${{ secrets.AZURE_CLUSTER_CA_CERT }}
           IBM_CLUSTER_USERNAME: "apikey"
           IBM_CLUSTER_PASSWORD: ${{ secrets.IBMCLOUD_API_KEY }}
+          IBM_CLUSTER_CA_CERT: ""
           ENVIRONMENT: ${{ matrix.testcase }}
         shell: bash
         run: |
@@ -80,12 +85,15 @@ jobs:
           if [[ $ENVIRONMENT =~ ^aws ]]; then
             echo "::set-output name=CLUSTER_USERNAME::$AWS_CLUSTER_USERNAME"
             echo "::set-output name=CLUSTER_PASSWORD::$AWS_CLUSTER_PASSWORD"
+            echo "::set-output name=CLUSTER_CA_CERT::$AWS_CLUSTER_CA_CERT"
           elif [[ $ENVIRONMENT =~ ^azure ]]; then
             echo "::set-output name=CLUSTER_USERNAME::$AZURE_CLUSTER_USERNAME"
             echo "::set-output name=CLUSTER_PASSWORD::$AZURE_CLUSTER_PASSWORD"
+            echo "::set-output name=CLUSTER_CA_CERT::$AZURE_CLUSTER_CA_CERT"
           else 
             echo "::set-output name=CLUSTER_USERNAME::$IBM_CLUSTER_USERNAME"
             echo "::set-output name=CLUSTER_PASSWORD::$IBM_CLUSTER_PASSWORD"
+            echo "::set-output name=CLUSTER_CA_CERT::$IBM_CLUSTER_CA_CERT"
           fi
 
       - name: Verify deploy on ${{ matrix.testcase }}
@@ -102,6 +110,7 @@ jobs:
           TF_VAR_cp_entitlement_key: ${{ secrets.CP_ENTITLEMENT_KEY }}
           TF_VAR_cluster_username: ${{ steps.variables.outputs.CLUSTER_USERNAME }}
           TF_VAR_cluster_password: ${{ steps.variables.outputs.CLUSTER_PASSWORD }}
+          TF_VAR_cluster_ca_cert: ${{ steps.variables.outputs.CLUSTER_CA_CERT }}
           TF_VAR_ibmcloud_api_key: ${{ secrets.IBMCLOUD_API_KEY }}
 
       - name: Verify destroy on ${{ matrix.testcase }}
@@ -118,4 +127,5 @@ jobs:
           TF_VAR_cp_entitlement_key: ${{ secrets.CP_ENTITLEMENT_KEY }}
           TF_VAR_cluster_username: ${{ steps.variables.outputs.CLUSTER_USERNAME }}
           TF_VAR_cluster_password: ${{ steps.variables.outputs.CLUSTER_PASSWORD }}
+          TF_VAR_cluster_ca_cert: ${{ steps.variables.outputs.CLUSTER_CA_CERT }}
           TF_VAR_ibmcloud_api_key: ${{ secrets.IBMCLOUD_API_KEY }}
