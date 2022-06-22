@@ -21,7 +21,7 @@ on:
       AZURE_CLUSTER_PASSWORD:
         required: true
       AZURE_CLUSTER_CA_CERT:
-        required: true
+        required: false
       AWS_CLUSTER_USERNAME:
         required: true
       AWS_CLUSTER_PASSWORD:
