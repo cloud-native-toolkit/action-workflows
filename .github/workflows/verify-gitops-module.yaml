@@ -28,6 +28,10 @@ on:
         required: true
       CP_ENTITLEMENT_KEY:
         required: true
+      AWS_ACCESS_KEY_ID:
+        required: false
+      AWS_SECRET_ACCESS_KEY:
+        required: false
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -94,6 +98,8 @@ jobs:
           TF_VAR_cluster_username: ${{ steps.variables.outputs.CLUSTER_USERNAME }}
           TF_VAR_cluster_password: ${{ steps.variables.outputs.CLUSTER_PASSWORD }}
           TF_VAR_ibmcloud_api_key: ${{ secrets.IBMCLOUD_API_KEY }}
+          TF_VAR_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Verify destroy on ${{ matrix.testcase }}
         uses: cloud-native-toolkit/action-module-verify-destroy@main
@@ -110,3 +116,5 @@ jobs:
           TF_VAR_cluster_username: ${{ steps.variables.outputs.CLUSTER_USERNAME }}
           TF_VAR_cluster_password: ${{ steps.variables.outputs.CLUSTER_PASSWORD }}
           TF_VAR_ibmcloud_api_key: ${{ secrets.IBMCLOUD_API_KEY }}
+          TF_VAR_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
