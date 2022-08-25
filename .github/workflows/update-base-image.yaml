@@ -45,8 +45,10 @@ jobs:
 
           if [[ "$PATCH" -eq 0 ]]; then
             CHANGE="feature"
+            RELEASE="minor"
           else
             CHANGE="bug"
+            RELEASE="patch"
           fi
 
           if [[ -n "${TAG}" ]]; then
@@ -63,6 +65,7 @@ jobs:
           echo "::set-output name=message::${MESSAGE}"
           echo "::set-output name=body::${BODY}"
           echo "::set-output name=change::${CHANGE}"
+          echo "::set-output name=release::${RELEASE}"
 
       - name: Create Pull Request
         id: cpr
@@ -74,7 +77,7 @@ jobs:
           token: ${{ secrets.TOKEN }}
           branch: "${{ github.event.client_payload.repo }}"
           delete-branch: true
-          labels: ${{ steps.setup.outputs.change }},minor
+          labels: ${{ steps.setup.outputs.change }},${{ steps.setup.outputs.release }}
           reviewers: ${{ secrets.ASSIGNEES }}
           signoff: true
 
