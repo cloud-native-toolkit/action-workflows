@@ -1,0 +1,87 @@
+name: Update dependencies
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the main branch
+on:
+  workflow_call:
+    inputs:
+      repo:
+        required: true
+        type: string
+      ref:
+        required: true
+        type: string
+      sha:
+        required: true
+        type: string
+    secrets:
+      TOKEN:
+        required: true
+      ASSIGNEES:
+        required: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup variables
+        id: variables
+        run: |
+          VERSION=$(echo "${{ inputs.ref }}" | sed -E "s~refs/tags/(.*)~\1~g")
+          echo "::set-output name=version::$VERSION"
+
+      - name: Update base image
+        run: ./.github/scripts/update-base-image.sh ${{ steps.variables.outputs.version }}
+
+      - name: Generate commit message
+        id: setup
+        run: |
+          TAG=$(echo "${{ inputs.ref }}" | sed -E "s~refs/tags/(.*)~\1~g")
+          PATCH=$(echo "$TAG" | sed -E "s/v{0,1}[0-9]+[.][0-9]+[.]([0-9]+)/\1/g")
+
+          if [[ "$PATCH" -eq 0 ]]; then
+            CHANGE="feature"
+          else
+            CHANGE="bug"
+          fi
+
+          if [[ -n "${TAG}" ]]; then
+            MESSAGE="Updates ${{ inputs.repo }} module to $TAG"
+          else
+            MESSAGE="Updates ${{ inputs.repo }} module"
+          fi
+          BODY="${{ inputs.repo }}}#${{ inputs.sha }}"
+
+          echo "TAG: $TAG"
+          echo "CHANGE: $CHANGE"
+          echo "MESSAGE: $MESSAGE"
+
+          echo "::set-output name=message::${MESSAGE}"
+          echo "::set-output name=body::${BODY}"
+          echo "::set-output name=change::${CHANGE}"
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v3
+        with:
+          title: "${{ steps.setup.outputs.message }}"
+          body: "${{ steps.setup.outputs.body }}"
+          commit-message: "${{ steps.setup.outputs.message }}"
+          token: ${{ secrets.TOKEN }}
+          branch: "${{ github.event.client_payload.repo }}"
+          delete-branch: true
+          labels: ${{ steps.setup.outputs.change }},minor
+          reviewers: ${{ secrets.ASSIGNEES }}
+          signoff: true
+
+      - name: Enable Pull Request Automerge
+        if: steps.cpr.outputs.pull-request-operation == 'created'
+        uses: peter-evans/enable-pull-request-automerge@v2
+        with:
+          token: ${{ secrets.TOKEN }}
+          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+          merge-method: squash
