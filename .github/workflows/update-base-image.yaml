@@ -35,7 +35,20 @@ jobs:
           echo "::set-output name=version::$VERSION"
 
       - name: Update base image
-        run: ./.github/scripts/update-base-image.sh ${{ steps.variables.outputs.version }}
+        run: |
+          NEW_VERSION="${{ steps.variables.outputs.version }}"
+          
+          ls | grep -E "Dockerfile.*|Containerfile.*" | while read file; do
+            if [[ -L "${file}" ]]; then
+              continue
+            fi
+            
+            CURRENT_VERSION=$(cat "${file}" | grep -E "^FROM" | sed -E "s/.*-(v[0-9]+[.][0-9]+[.][0-9]+)-.*/\1/g")
+            
+            cat "${file}" | sed -E "s/(FROM.*)${CURRENT_VERSION}(.*)/\1${NEW_VERSION}\2/g" > "${file}.bak"
+            cp "${file}.bak" "${file}"
+            rm "${file}.bak"
+          done
 
       - name: Generate commit message
         id: setup
