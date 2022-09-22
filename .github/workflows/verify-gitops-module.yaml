@@ -32,6 +32,8 @@ on:
         required: false
       AWS_SECRET_ACCESS_KEY:
         required: false
+      TESTCASE_OVERRIDE:
+        required: false
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -84,10 +86,10 @@ jobs:
             echo "::set-output name=CLUSTER_PASSWORD::$IBM_CLUSTER_PASSWORD"
           fi
 
-      - name: Verify deploy on ${{ matrix.testcase }}
+      - name: Verify deploy on ${{ secrets.TESTCASE_OVERRIDE || matrix.testcase }}
         uses: cloud-native-toolkit/action-module-verify-deploy@main
         with:
-          clusterId: ${{ matrix.testcase }}
+          clusterId: ${{ secrets.TESTCASE_OVERRIDE || matrix.testcase }}
           validateDeployScript: .github/scripts/validate-deploy.sh
         env:
           TF_VAR_git_username: ${{ secrets.GIT_ADMIN_USERNAME }}
@@ -102,11 +104,11 @@ jobs:
           TF_VAR_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Verify destroy on ${{ matrix.testcase }}
+      - name: Verify destroy on ${{ secrets.TESTCASE_OVERRIDE || matrix.testcase }}
         uses: cloud-native-toolkit/action-module-verify-destroy@main
         if: ${{ always() && inputs.skipDestroy != 'true' }}
         with:
-          clusterId: ${{ matrix.testcase }}
+          clusterId: ${{ secrets.TESTCASE_OVERRIDE || matrix.testcase }}
         env:
           TF_VAR_git_username: ${{ secrets.GIT_ADMIN_USERNAME }}
           TF_VAR_git_token: ${{ secrets.GIT_ADMIN_TOKEN }}
