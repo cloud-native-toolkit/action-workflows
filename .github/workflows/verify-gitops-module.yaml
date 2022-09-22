@@ -67,10 +67,11 @@ jobs:
           AWS_CLUSTER_PASSWORD: ${{ secrets.AWS_CLUSTER_PASSWORD }}
           IBM_CLUSTER_USERNAME: "apikey"
           IBM_CLUSTER_PASSWORD: ${{ secrets.IBMCLOUD_API_KEY }}
-          ENVIRONMENT: ${{ matrix.testcase }}
+          ENVIRONMENT: ${{ secrets.TESTCASE_OVERRIDE || matrix.testcase }}
         shell: bash
         run: |
-          repo=$(echo ${GITHUB_REPOSITORY} | sed -E "s~.*/[^-]+-(.*)~\1-${{matrix.testcase}}~g" | sed 's/_latest_gitops//g')
+          echo "${{ secrets.TESTCASE_OVERRIDE || matrix.testcase }}" | sed -e 's/\(.\)/\1\n/g'
+          repo=$(echo ${GITHUB_REPOSITORY} | sed -E "s~.*/[^-]+-(.*)~\1-${{ secrets.TESTCASE_OVERRIDE || matrix.testcase }}~g" | sed 's/_latest_gitops//g')
           echo "Repo: $repo"
           echo "::set-output name=repo::$repo"
 
