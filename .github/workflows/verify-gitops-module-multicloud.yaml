@@ -97,7 +97,7 @@ jobs:
           fi
 
       - name: Verify deploy on ${{ matrix.testcase }}
-        uses: cloud-native-toolkit/action-module-verify-deploy@beta
+        uses: cloud-native-toolkit/action-module-verify-deploy@v2
         with:
           testcase: ${{ matrix.testcase }}
           validateDeployScript: .github/scripts/validate-deploy.sh
@@ -114,7 +114,7 @@ jobs:
           TF_VAR_ibmcloud_api_key: ${{ secrets.IBMCLOUD_API_KEY }}
 
       - name: Verify destroy on ${{ matrix.testcase }}
-        uses: cloud-native-toolkit/action-module-verify-destroy@beta
+        uses: cloud-native-toolkit/action-module-verify-destroy@v2
         if: ${{ always() && inputs.skipDestroy != 'true' }}
         with:
           testcase: ${{ matrix.testcase }}

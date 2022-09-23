@@ -91,7 +91,7 @@ jobs:
           fi
 
       - name: Verify deploy on ${{ secrets.TESTCASE_OVERRIDE || matrix.testcase }}
-        uses: cloud-native-toolkit/action-module-verify-deploy@beta
+        uses: cloud-native-toolkit/action-module-verify-deploy@v2
         with:
           testcase: ${{ secrets.TESTCASE_OVERRIDE || matrix.testcase }}
           validateDeployScript: .github/scripts/validate-deploy.sh
@@ -109,7 +109,7 @@ jobs:
           TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Verify destroy on ${{ secrets.TESTCASE_OVERRIDE || matrix.testcase }}
-        uses: cloud-native-toolkit/action-module-verify-destroy@beta
+        uses: cloud-native-toolkit/action-module-verify-destroy@v2
         if: ${{ always() && inputs.skipDestroy != 'true' }}
         with:
           testcase: ${{ secrets.TESTCASE_OVERRIDE || matrix.testcase }}
