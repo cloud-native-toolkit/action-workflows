@@ -41,9 +41,11 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: quay.io/cloudnativetoolkit/cli-tools-core:v1.2
-    defaults:
-      run:
-        working-directory: /home/devops
+      env:
+        GITHUB_WORKSPACE: /home/devops/work
+        HOME: /home/devops
+        TF_LOG_PROVIDER: INFO
+      options: --workdir /home/devops/work
 
     strategy:
       matrix:
@@ -53,11 +55,6 @@ jobs:
           # - aws_latest_gitops
       max-parallel: 1
       fail-fast: false
-
-    env:
-      HOME: /home/devops
-      TF_LOG_PROVIDER: DEBUG
-      GITHUB_WORKSPACE: /home/devops/work
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
