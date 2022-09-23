@@ -39,7 +39,11 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    container: quay.io/cloudnativetoolkit/cli-tools:v1.2
+    container:
+      image: quay.io/cloudnativetoolkit/cli-tools-core:v1.2
+    defaults:
+      run:
+        working-directory: /home/devops
 
     strategy:
       matrix:
