@@ -70,7 +70,7 @@ jobs:
           ENVIRONMENT: ${{ secrets.TESTCASE_OVERRIDE || matrix.testcase }}
         shell: bash
         run: |
-          if [ -z "$secrets.TESTCASE_OVERRIDE" ]; then
+          if [ -n "$secrets.TESTCASE_OVERRIDE" ]; then
             echo "${{ secrets.TESTCASE_OVERRIDE || matrix.testcase }}" | sed -e 's/\(.\)/\1\n/g'
           fi
           
