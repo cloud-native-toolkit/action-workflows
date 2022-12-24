@@ -39,7 +39,13 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    container: quay.io/cloudnativetoolkit/cli-tools:v1.2
+    container:
+      image: quay.io/cloudnativetoolkit/cli-tools-core:v1.2
+      env:
+        GITHUB_WORKSPACE: /home/devops/work
+        HOME: /home/devops
+        TF_LOG_PROVIDER: INFO
+      options: --workdir /home/devops/work
 
     strategy:
       matrix:
@@ -50,13 +56,10 @@ jobs:
           #- aws_latest_gitops
       fail-fast: false
 
-    env:
-      HOME: /home/devops
-
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
 
       - id: variables
         name: Set up variables
@@ -97,9 +100,9 @@ jobs:
           fi
 
       - name: Verify deploy on ${{ matrix.testcase }}
-        uses: cloud-native-toolkit/action-module-verify-deploy@main
+        uses: cloud-native-toolkit/action-module-verify-deploy@v2
         with:
-          clusterId: ${{ matrix.testcase }}
+          testcase: ${{ matrix.testcase }}
           validateDeployScript: .github/scripts/validate-deploy.sh
         env:
           TF_VAR_git_username: ${{ secrets.GIT_ADMIN_USERNAME }}
@@ -114,10 +117,10 @@ jobs:
           TF_VAR_ibmcloud_api_key: ${{ secrets.IBMCLOUD_API_KEY }}
 
       - name: Verify destroy on ${{ matrix.testcase }}
-        uses: cloud-native-toolkit/action-module-verify-destroy@main
+        uses: cloud-native-toolkit/action-module-verify-destroy@v2
         if: ${{ always() && inputs.skipDestroy != 'true' }}
         with:
-          clusterId: ${{ matrix.testcase }}
+          testcase: ${{ matrix.testcase }}
         env:
           TF_VAR_git_username: ${{ secrets.GIT_ADMIN_USERNAME }}
           TF_VAR_git_token: ${{ secrets.GIT_ADMIN_TOKEN }}
