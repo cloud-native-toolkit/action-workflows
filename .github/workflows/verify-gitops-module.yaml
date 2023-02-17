@@ -90,6 +90,10 @@ jobs:
             echo "::set-output name=CLUSTER_PASSWORD::$IBM_CLUSTER_PASSWORD"
           fi
 
+          prefix=repo.replace(/[aeiou]/gi, '');
+          echo "Prefix: $prefix"
+          echo "::set-output name=prefix::$prefix"
+
       - name: Verify deploy on ${{ secrets.TESTCASE_OVERRIDE || matrix.testcase }}
         uses: cloud-native-toolkit/action-module-verify-deploy@main
         with:
@@ -100,7 +104,7 @@ jobs:
           TF_VAR_git_token: ${{ secrets.GIT_ADMIN_TOKEN }}
           TF_VAR_git_org: ${{ steps.variables.outputs.org }}
           TF_VAR_git_repo: ${{ steps.variables.outputs.repo }}
-          TF_VAR_bootstrap_prefix: ${{ steps.variables.outputs.repo }}
+          TF_VAR_bootstrap_prefix: ${{ steps.variables.outputs.prefix }}
           TF_VAR_cp_entitlement_key: ${{ secrets.CP_ENTITLEMENT_KEY }}
           TF_VAR_cluster_username: ${{ steps.variables.outputs.CLUSTER_USERNAME }}
           TF_VAR_cluster_password: ${{ steps.variables.outputs.CLUSTER_PASSWORD }}
@@ -118,7 +122,7 @@ jobs:
           TF_VAR_git_token: ${{ secrets.GIT_ADMIN_TOKEN }}
           TF_VAR_git_org: ${{ steps.variables.outputs.org }}
           TF_VAR_git_repo: ${{ steps.variables.outputs.repo }}
-          TF_VAR_bootstrap_prefix: ${{ steps.variables.outputs.repo }}
+          TF_VAR_bootstrap_prefix: ${{ steps.variables.outputs.prefix }}
           TF_VAR_cp_entitlement_key: ${{ secrets.CP_ENTITLEMENT_KEY }}
           TF_VAR_cluster_username: ${{ steps.variables.outputs.CLUSTER_USERNAME }}
           TF_VAR_cluster_password: ${{ steps.variables.outputs.CLUSTER_PASSWORD }}
