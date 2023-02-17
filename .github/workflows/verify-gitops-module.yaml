@@ -90,7 +90,7 @@ jobs:
             echo "::set-output name=CLUSTER_PASSWORD::$IBM_CLUSTER_PASSWORD"
           fi
 
-          prefix=repo.replace(/[aeiou]/gi, '');
+          prefix=$(echo ${GITHUB_REPOSITORY} | sed -E "s~.*/[^-]+-(.*)~\1-${{ secrets.TESTCASE_OVERRIDE || matrix.testcase }}~g" | sed 's/_latest_gitops//g' | sed 's/[aeiouAEIOU]//g')
           echo "Prefix: $prefix"
           echo "::set-output name=prefix::$prefix"
 
