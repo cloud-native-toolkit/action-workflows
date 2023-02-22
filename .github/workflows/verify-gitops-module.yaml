@@ -107,7 +107,10 @@ jobs:
           TF_VAR_bootstrap_prefix: ${{ steps.variables.outputs.prefix }}
           TF_VAR_cp_entitlement_key: ${{ secrets.CP_ENTITLEMENT_KEY }}
           TF_VAR_cluster_username: ${{ steps.variables.outputs.CLUSTER_USERNAME }}
+          TF_VAR_cluster_login_user: ${{ steps.variables.outputs.CLUSTER_USERNAME }}
           TF_VAR_cluster_password: ${{ steps.variables.outputs.CLUSTER_PASSWORD }}
+          TF_VAR_cluster_login_password: ${{ steps.variables.outputs.CLUSTER_PASSWORD }}
+          TF_VAR_cluster_login_token: ""
           TF_VAR_ibmcloud_api_key: ${{ secrets.IBMCLOUD_API_KEY }}
           TF_VAR_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
